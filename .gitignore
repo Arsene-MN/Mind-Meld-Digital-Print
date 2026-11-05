@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw media dropped in for `npm run media` (too big for git; the processed copies live in public/media)
+/media-inbox/*/*
+!/media-inbox/*/.gitkeep
+/media-inbox/.cache.json

@@ -1,26 +1,190 @@
 @import "tailwindcss";
+/* Media isn't code: never scan it for class names (macOS may also block reading raw files dropped in from Downloads). */
+@source not "../../media-inbox";
+@source not "../../public";
+
+@theme {
+  --color-paper: #f2eee5;
+  --color-paper-2: #e8e2d6;
+  --color-ink: #11100e;
+  --color-night: #0c0b0a;
+  --color-cream: #f2eee5;
+  /* The accent colour. Change these two lines to re-colour the whole site. */
+  --color-accent: #3b5bf5;
+  --color-accent-soft: #afc0ff;
+  --color-mute: #77716a;
+  --color-line: color-mix(in oklab, currentColor 18%, transparent);
+
+  --font-serif: var(--font-instrument-serif), "Times New Roman", Georgia, serif;
+  --font-sans: var(--font-geist-sans), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-gallery: cubic-bezier(0.22, 1, 0.36, 1);
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: var(--color-paper);
+  --fg: var(--color-ink);
+  --gutter: clamp(16px, 3.2vw, 48px);
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+@layer components {
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+  }
+  /* Section labels ("01 Our mission"): italic serif, with the number as a small accent figure. */
+  .label {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.3rem, 1.7vw, 1.8rem);
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+  }
+  .label-sm {
+    font-size: clamp(1.1rem, 1.25vw, 1.3rem);
+  }
+  .label-n {
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 0.55em;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    vertical-align: 0.55em;
+    margin-right: 0.7em;
+  }
+  [data-theme="dark"] .label-n,
+  .bg-night .label-n {
+    color: var(--color-accent-soft);
+  }
+  .gutter {
+    padding-inline: var(--gutter);
+  }
+  .hairline {
+    height: 1px;
+    background: currentColor;
+    opacity: 0.18;
+  }
+  .split-line {
+    overflow: clip;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+}
+
+/* Film grain: a tiny tiled noise texture, static so it costs nothing. */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+[data-scene="dark"] .grain {
+  mix-blend-mode: screen;
+  opacity: 0.05;
+  filter: invert(1);
+}
+
+/* Preloader only exists when JS runs; without JS the page is simply there. */
+.preloader {
+  display: none;
+}
+html.js .preloader {
+  display: flex;
+}
+
+/* Custom cursor only on fine pointers. */
+.cursor {
+  display: none;
+}
+@media (pointer: fine) {
+  .cursor {
+    display: block;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Without JS the theme never cross-fades, so dark sections paint themselves. */
+html:not(.js) [data-theme="dark"] {
+  background: var(--color-night);
+  color: var(--color-cream);
 }
