@@ -198,10 +198,10 @@ export const team: Member[] = [
   },
   {
     slug: "nadine",
-    name: "Nadine Uwase",
+    name: "Nadine Irakoze",
     country: "Rwanda",
     role: "Storytelling & Design",
-    portrait: real(img("/media/team/nadine.jpg", 1200, 1600, "Portrait of Nadine Uwase"), generated.team?.nadine),
+    portrait: real(img("/media/team/nadine.jpg", 1200, 1600, "Portrait of Nadine Irakoze"), generated.team?.nadine),
     interest: "Writing, visual design and photography.",
     funFact: "Has a camera roll that is 90% sunsets.",
     brings: "Shapes how our ideas look and sound, from slides to scripts.",
